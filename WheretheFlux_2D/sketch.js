@@ -14,7 +14,7 @@ class Dot {
     } else {
       noFill();
       stroke(255);
-      strokeWeight(2);
+      strokeWeight(0);
     }
     ellipse(this.x, this.y, this.diameter);
   }
@@ -30,6 +30,7 @@ let ballPosX;
 let ballPosY;
 let mouseClickX;
 let mouseClickY;
+let ballSize;
 let speed = 10;
 let dots = []; // Array to hold the class dots
 
@@ -72,12 +73,22 @@ function draw() {
   }
 
   // Update and display dots in a loop
+  let closestDistance = Infinity;
   for (let dot of dots) {
     dot.checkInside(ballPosX, ballPosY); // Check if the ball is inside the dot
     dot.display(); // Display the dot
+
+    // Find the closest dot distance to adjust the ball color
+    let distanceToDot = dist(ballPosX, ballPosY, dot.x, dot.y);
+    if (distanceToDot < closestDistance) {
+      closestDistance = distanceToDot;
+    }
   }
 
-  // Create the ball
+  // Adjust ball color based on closest distance
+  let brightness = map(closestDistance, 40, 150, 255, 50); // Closer distance = darker color
+  fill(brightness);
+  ballSize = (brightness/5);
   ball();
 
   // End game
@@ -91,14 +102,14 @@ function draw() {
 // Define other functions
 function ball() {
   push();
-  fill(255);
-  ellipse(ballPosX, ballPosY, 50);
+  ellipse(ballPosX, ballPosY, ballSize);
   pop();
 }
 
 function mousePressed() {
   mouseClickX = mouseX;
   mouseClickY = mouseY;
+  console.log(ballSize);
 }
 
 function allDotsFilled() {
